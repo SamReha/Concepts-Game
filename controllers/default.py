@@ -11,7 +11,12 @@
 
 @auth.requires_login()
 def index():
+    #if not auth.players:
+    #    playerList = []
+    #else:
+    #    playerList = JSON.parse(auth.players)
     playerList = []
+
     addPlayerButton = A('Add New Player', _class='btn', _href=URL('default', 'addPlayer'))
     logoutButton = A('Log Out', _class='btn', _href=URL('default', 'user', args=['logout']))
     return dict(playerList=playerList, addPlayerButton=addPlayerButton, logoutButton=logoutButton)

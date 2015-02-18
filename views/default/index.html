@@ -1,7 +1,7 @@
 {{extend 'layout.html'}}
 
 {{for i in range(0, len(playerList)):}}
-    {{A(playerList[i], _class='btn', _href=URL('default', 'players', args=[playerList[i]]))}}
+    {{A(playerList[i], _class='btn', _href=URL('default', 'player', args=[playerList[i]]))}}
 {{pass}}
 
 {{if len(playerList) is 0:}}

@@ -47,6 +47,11 @@ auth = Auth(db)
 service = Service()
 plugins = PluginManager()
 
+## Configure project-specific extra user fields:
+auth.settings.extra_fields['auth_user']= [
+  Field('players'), # A JSON string of names corresponding to names in db.players
+]
+
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=False, signature=False)
 

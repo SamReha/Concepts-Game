@@ -9,17 +9,16 @@
 ## - api is an example of Hypermedia API support and access control
 #########################################################################
 
+@auth.requires_login()
 def index():
-    """
-    example action using the internationalization operator T and flash
-    rendered by views/default/index.html or views/generic.html
+    playerList = []
+    addPlayerButton = A('Add New Player', _class='btn', _href=URL('default', 'addPlayer'))
+    logoutButton = A('Log Out', _class='btn', _href=URL('default', 'user', args=['logout']))
+    return dict(playerList=playerList, addPlayerButton=addPlayerButton, logoutButton=logoutButton)
 
-    if you need a simple wiki simply replace the two lines below with:
-    return auth.wiki()
-    """
-    response.flash = T("Welcome to web2py!")
-    return dict(message=T('Hello World'))
-
+@auth.requires_login()
+def addPlayer():
+    return dict()
 
 def user():
     """

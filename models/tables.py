@@ -25,3 +25,11 @@ db.define_table('problem',
                 Field('complexity'), # "2", "3", etc. Number of objects to compare
                 Field('images'), # The set of images used in the problem. Placeholder.
                )
+
+# Use this method to guarantee the currently logged-in user is the caretaker of the player in question. If not, redirects user to index.
+def verifiyCaretaker(caretakerID, playerID):
+    pID = long(playerID)
+    player = db(db.player.id==pID).select().first()
+    if long(player.caretakerID) != caretakerID:
+        redirect(URL('default', 'index'))
+        session.flash=T("You cannot view players that you don't manage!")

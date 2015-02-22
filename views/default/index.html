@@ -1,12 +1,15 @@
 {{extend 'layout.html'}}
-
-{{for i in range(0, len(playerList)):}}
-    {{A(playerList[i], _class='btn', _href=URL('default', 'player', args=[playerList[i]]))}}
-{{pass}}
-
 {{if len(playerList) is 0:}}
-    <p>You don't have any players!</p>
+    <h3>You don't have any players!</h3>
+{{else:}}
+    <h3>Select A Player!</h3>
+    {{for i in range(0, len(playerList)):}}
+        {{=A(playerList[i].name, _class='btn', _href=URL('default', 'player', args=[playerList[i].id]))}}
+    {{pass}}
 {{pass}}
+
+<br>
+<br>
 
 {{=addPlayerButton}}
 <br>

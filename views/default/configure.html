@@ -1,0 +1,28 @@
+{{extend 'layout.html'}}
+<h1>Configuring Player {{=player.name}}</h1>
+<h3>Stats:</h3>
+<table>
+    <tr>
+        <td>Last Time Played:</td>
+        <td>{{=player.lastTimePlayed}}</td>
+    </tr>
+    <tr>
+        <td>Total Time Played:</td>
+        <td>{{=player.totalTimePlayed}}</td>
+    </tr>
+    <tr>
+        <td>Total Games Played:</td>
+        <td>{{=player.gamesPlayed}}</td>
+    </tr>
+    <tr>
+        <td>Percent Correct:</td>
+        <td>{{=player.percentCorrect}}</td>
+    </tr>
+</table>
+<h3>Videos:</h3>
+<ul>
+    {{for i in range(0, len(videos)):}}
+        <li>{{=videos[i].link}} {{=A('Remove Video', _class='btn', _href=URL('default', 'removeVideo', args=[player.id,videos[i].id]))}}</li>
+    {{pass}}
+</ul>
+{{=addVideoButton}}

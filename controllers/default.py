@@ -11,19 +11,84 @@
 
 @auth.requires_login()
 def index():
-    #if not auth.players:
-    #    playerList = []
-    #else:
-    #    playerList = JSON.parse(auth.players)
-    playerList = []
+    playerList = db(db.player.caretakerID == auth.user.id).select()
 
     addPlayerButton = A('Add New Player', _class='btn', _href=URL('default', 'addPlayer'))
     logoutButton = A('Log Out', _class='btn', _href=URL('default', 'user', args=['logout']))
+
     return dict(playerList=playerList, addPlayerButton=addPlayerButton, logoutButton=logoutButton)
+
+# This controller is for the player page
+@auth.requires_login()
+def player():
+    verifiyCaretaker(auth.user.id, request.args(0))
+
+    player = db(db.player.id==request.args(0)).select().first()
+
+    startTestButton = A('Start in Test Mode', _class='btn', _href=URL('default', 'index'))
+    startPracticeButton = A('Star in Practice Mode', _class='btn', _href=URL('default', 'index'))
+    configureButton = A('Configure', _class='btn', _href=URL('default', 'configure', args=[request.args(0)]))
+    removePlayerButton = A('Remove Player', _class='btn', _href=URL('default', 'removePlayer', args=[request.args(0)]))
+
+    return dict(startTestButton=startTestButton,
+                startPracticeButton=startPracticeButton,
+                configureButton=configureButton,
+                removePlayerButton=removePlayerButton,
+                name=player.name,
+               )
+
+@auth.requires_login()
+def configure():
+    verifiyCaretaker(auth.user.id, request.args(0))
+
+    player = db(db.player.id==request.args(0)).select().first()
+    videos = db(db.videos.playerID==player.id).select()
+
+    addVideoButton = A('Add a Video', _class='btn', _href=URL('default', 'addVideo', args=[player.id]))
+
+    return dict(player=player, videos=videos, addVideoButton=addVideoButton)
 
 @auth.requires_login()
 def addPlayer():
-    return dict()
+    form = SQLFORM.factory(Field('name',
+                                 label='Player Name',
+                                 ),
+                          )
+    if form.process().accepted:
+        db.player.insert(caretakerID = auth.user.id,
+                         name = form.vars.name,
+                        )
+        redirect(URL('default', 'index'))
+
+    return dict(form=form)
+
+@auth.requires_login()
+def removePlayer():
+    verifiyCaretaker(auth.user.id, request.args(0))
+
+    db(db.player.id == request.args(0)).delete()
+
+    redirect(URL('default', 'index'))
+
+@auth.requires_login()
+def addVideo():
+    form = SQLFORM.factory(Field('link',
+                                 label='Video Link',
+                                 ),
+                          )
+    if form.process().accepted:
+        db.videos.insert(playerID = request.args(0),
+                         link = form.vars.link,
+                        )
+        redirect(URL('default', 'configure', args=[request.args(0)]))
+
+    return dict(form=form)
+
+@auth.requires_login()
+def removeVideo():
+    db(db.videos.id == request.args(1)).delete()
+
+    redirect(URL('default', 'configure', args=[request.args(0)]))
 
 def user():
     """

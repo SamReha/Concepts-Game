@@ -19,11 +19,24 @@ db.define_table('videos',
                 Field('link'),
                )
 
+
 # Each entry in the problem table is a collection of information describing a particular problem.
-db.define_table('problem',
-                Field('problemType'), # "size", "fullness", "color", etc.
-                Field('complexity'), # "2", "3", etc. Number of objects to compare
-                Field('images'), # The set of images used in the problem. Placeholder.
+TYPES = ['size', 'fullness', 'color', 'distance', 'longer', 'number', 'quantity']
+db.define_table('problems',
+                Field('problemType'),
+                Field('problemMessage', requires=IS_NOT_EMPTY()),     # The text prompt at the head of each problem, eg "Please choose the larger object"
+                Field('complexity', requires=IS_INT_IN_RANGE(0, 20)), # Number of objects to compare
+               )
+db.problems.problemType.requires = IS_IN_SET(TYPES)
+
+# Each problem image represents a single image associated with a particular problem.
+# Each problemImage is tagged as either being a correct or incorrect answer.
+# IT IS IMPORTANT THAT EVERY IMAGE SET CONTAIN AT LEAST 1 CORRECT ANSWER, EVEN THOUGH THE SCHEMA DOES NOT ENFORCE THIS.
+# An image set is constructed by querying problemImages for a particular problem ID.
+db.define_table('problemImages',
+                Field('problemID'),
+                Field('image', 'upload'),
+                Field('correctAnswer', 'boolean'),
                )
 
 # Use this method to guarantee the currently logged-in user is the caretaker of the player in question. If not, redirects user to index.

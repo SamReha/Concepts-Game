@@ -1,0 +1,25 @@
+{{extend 'layout.html'}}
+<h1>Create a New Problem, or Modify an Existing One</h1>
+{{if numProblems == 1:}}
+    <h4>There is currently {{=numProblems}} problem in the database, and {{=len(incompleteProblems)}} are incomplete!</h4>
+{{else:}}
+    <h4>There are currently {{=numProblems}} problems in the database, and {{=len(incompleteProblems)}} are incomplete!</h4>
+{{pass}}
+
+{{if len(incompleteProblems) > 0:}}
+    <h3>Incomplete Problems, Please Add Images:</h3>
+    <table>
+    {{for i in range(0, len(incompleteProblems)):}}
+        <tr>
+            <td>{{=incompleteProblems[i].problemMessage}}</td>
+            <td>Needed Images: {{=incompleteProblems[i].complexity}}</td>
+            <td>{{=A('Add Images', _class='btn', _href=URL('default', 'addImages', args=[incompleteProblems[i].id]))}}</td>
+            <td>{{=A('Remove This Problem', _class='btn', _href=URL('default', 'deleteProblem', args=[incompleteProblems[i].id]))}}</td>
+        </tr>
+    {{pass}}
+    </table>
+{{pass}}
+
+<hr>
+<h5>Start a New Problem:</h5>
+{{=form}}

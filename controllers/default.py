@@ -8,6 +8,7 @@
 ## - download is for downloading files uploaded in the db (does streaming)
 ## - api is an example of Hypermedia API support and access control
 #########################################################################
+import os
 
 @auth.requires_login()
 def index():
@@ -16,7 +17,9 @@ def index():
     addPlayerButton = A('Add New Player', _class='btn', _href=URL('default', 'addPlayer'))
     logoutButton = A('Log Out', _class='btn', _href=URL('default', 'user', args=['logout']))
 
-    return dict(playerList=playerList, addPlayerButton=addPlayerButton, logoutButton=logoutButton)
+    debugAuthorProblem = A('DEBUG: Author Problems', _class='btn', _href=URL('default', 'createProblem'))
+
+    return dict(playerList=playerList, addPlayerButton=addPlayerButton, logoutButton=logoutButton, debugAuthorProblem=debugAuthorProblem)
 
 # This controller is for the player page
 @auth.requires_login()
@@ -89,6 +92,48 @@ def removeVideo():
     db(db.videos.id == request.args(1)).delete()
 
     redirect(URL('default', 'configure', args=[request.args(0)]))
+
+# DEBUG ONLY! Allows any user to create or modify a problem.
+def createProblem():
+    # Determine all problems that still need images
+    allProblems = db().select(db.problems.id, db.problems.complexity, db.problems.problemMessage)
+    incompleteProblems = []
+
+    for i in range(0, len(allProblems)):
+        images = db(db.problemImages.problemID == allProblems[i].id).select()
+        if len(images) != allProblems[i].complexity:
+            incompleteProblems.append(allProblems[i])
+
+    form = SQLFORM(db.problems)
+    if form.process().accepted:
+        redirect(URL('default', 'createProblem'))
+
+    return dict(numProblems=len(allProblems), incompleteProblems=incompleteProblems, form=form)
+
+def deleteProblem():
+    db(db.problems.id == request.args(0)).delete()
+
+    redirect(URL('default', 'createProblem'))
+
+def addImages():
+    problem = db(db.problems.id == request.args(0)).select().first()
+    existingImages = db(db.problemImages.problemID == problem.id).select()
+
+    if len(existingImages) == problem.complexity:
+        sesssion.flash = T('This problem has all it\s images')
+        redirect(URL('default', 'createProblem'))
+
+    form = SQLFORM.factory(Field('image', 'upload', uploadfolder=os.path.join(request.folder, 'uploads')),
+                           Field('correctAnswer', 'boolean'),
+                          )
+    if form.process().accepted:
+        db.problemImages.insert(problemID = request.args(0),
+                                image = form.vars.image,
+                                correctAnswer = form.vars.correctAnswer,
+                               )
+        redirect(URL('default', 'addImages', args=[request.args(0)]))
+
+    return dict(problem=problem, existingImages=existingImages, form=form)
 
 def user():
     """

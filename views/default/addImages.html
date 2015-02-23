@@ -1,0 +1,17 @@
+{{extend 'layout.html'}}
+<h1>Add Some Images:</h1>
+{{if len(existingImages) == 0:}}
+    <p>There are no images for this problem yet</p>
+{{else:}}
+    <table>
+        {{for i in range(0, len(existingImages)):}}
+            <tr>
+                <td>{{=existingImages[i].image}}</td>
+                <td>{{=existingImages[i].correctAnswer}}</td>
+            </tr>
+        {{pass}}
+    </table>
+{{pass}}
+<hr>
+<h5>Add a New Image:</h5>
+{{=form}}

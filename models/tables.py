@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+import os
 
 # The player tables collects all the information relating to a particular player, including stats.
 # To find videos associated with a particular player, query the "videos" table with the player's ID.
@@ -25,7 +26,7 @@ TYPES = ['size', 'fullness', 'color', 'distance', 'longer', 'number', 'quantity'
 db.define_table('problems',
                 Field('problemType'),
                 Field('problemMessage', requires=IS_NOT_EMPTY()),     # The text prompt at the head of each problem, eg "Please choose the larger object"
-                Field('complexity', requires=IS_INT_IN_RANGE(0, 20)), # Number of objects to compare
+                Field('complexity', requires=IS_INT_IN_RANGE(2, 21)), # Number of objects to compare
                )
 db.problems.problemType.requires = IS_IN_SET(TYPES)
 
@@ -35,9 +36,10 @@ db.problems.problemType.requires = IS_IN_SET(TYPES)
 # An image set is constructed by querying problemImages for a particular problem ID.
 db.define_table('problemImages',
                 Field('problemID'),
-                Field('image', 'upload'),
+                Field('image', 'upload', uploadfolder=os.path.join(request.folder, 'uploads')),
                 Field('correctAnswer', 'boolean'),
                )
+db.problemImages.problemID.readable = db.problemImages.problemID.writable = False
 
 # Use this method to guarantee the currently logged-in user is the caretaker of the player in question. If not, redirects user to index.
 def verifiyCaretaker(caretakerID, playerID):

@@ -36,7 +36,7 @@ db.problems.problemType.requires = IS_IN_SET(TYPES)
 # An image set is constructed by querying problemImages for a particular problem ID.
 db.define_table('problemImages',
                 Field('problemID'),
-                Field('image', 'upload', uploadfolder=os.path.join(request.folder, 'uploads')),
+                Field('imageLink'),
                 Field('correctAnswer', 'boolean'),
                )
 db.problemImages.problemID.readable = db.problemImages.problemID.writable = False

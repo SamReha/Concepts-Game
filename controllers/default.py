@@ -126,7 +126,7 @@ def addImages():
         sesssion.flash = T('This problem has all it\s images')
         redirect(URL('default', 'createProblem'))
 
-    form = SQLFORM.factory(Field('image', 'upload', uploadfolder=os.path.join(request.folder, 'uploads')),
+    form = SQLFORM.factory(Field('image', requires=IS_URL()),
                            Field('correctAnswer', 'boolean'),
                           )
     if form.process().accepted:

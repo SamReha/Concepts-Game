@@ -138,6 +138,9 @@ def addImages():
 
     return dict(problem=problem, existingImages=existingImages, form=form)
 
+def practice():
+    return dict()
+
 def user():
     """
     exposes:

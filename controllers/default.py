@@ -9,6 +9,7 @@
 ## - api is an example of Hypermedia API support and access control
 #########################################################################
 import os
+import random
 
 @auth.requires_login()
 def index():
@@ -140,7 +141,17 @@ def addImages():
     return dict(problem=problem, existingImages=existingImages, form=form)
 
 def practice():
-    return dict()
+    allProblems = db(db.problems.id > 0).select()
+
+    if len(allProblems) > 0:
+        problemIndex = random.randint(0, len(allProblems))
+        problem = allProblems[problemIndex]
+        images = db(db.problemImages.problemID == problem.id).select().first()
+    else:
+        problem = ''
+        images = []
+
+    return dict(problem=problem, images=images)
 
 def user():
     """

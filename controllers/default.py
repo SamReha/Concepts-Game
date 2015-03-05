@@ -15,11 +15,12 @@ def index():
     playerList = db(db.player.caretakerID == auth.user.id).select()
 
     addPlayerButton = A('Add New Player', _class='btn', _href=URL('default', 'addPlayer'))
+    startPractice = A('Practice', _class='btn', _href=URL('default', 'practice'))
     logoutButton = A('Log Out', _class='btn', _href=URL('default', 'user', args=['logout']))
 
     debugAuthorProblem = A('DEBUG: Author Problems', _class='btn', _href=URL('default', 'createProblem'))
 
-    return dict(playerList=playerList, addPlayerButton=addPlayerButton, logoutButton=logoutButton, debugAuthorProblem=debugAuthorProblem)
+    return dict(playerList=playerList, addPlayerButton=addPlayerButton, logoutButton=logoutButton, startPractice=startPractice, debugAuthorProblem=debugAuthorProblem)
 
 # This controller is for the player page
 @auth.requires_login()

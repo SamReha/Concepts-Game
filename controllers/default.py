@@ -133,7 +133,7 @@ def addImages():
                           )
     if form.process().accepted:
         db.problemImages.insert(problemID = request.args(0),
-                                image = form.vars.image,
+                                imageLink = form.vars.image,
                                 correctAnswer = form.vars.correctAnswer,
                                )
         redirect(URL('default', 'addImages', args=[request.args(0)]))

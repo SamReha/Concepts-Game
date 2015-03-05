@@ -115,6 +115,9 @@ def deleteProblem():
 
     redirect(URL('default', 'createProblem'))
 
+def editProblems():
+    return dict()
+
 def addImages():
     problem = db(db.problems.id == request.args(0)).select().first()
     existingImages = db(db.problemImages.problemID == problem.id).select()
